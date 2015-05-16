@@ -13,7 +13,7 @@ import javax.servlet.http.HttpServletRequest;
 import java.sql.SQLException;
 
 /**
- * Created by kazuki hasegawa on 14/05/15.
+ * Created by Kazuki Hasegawa on 14/05/15.
  *
  * @author kazuki hasegawa
  */
@@ -54,19 +54,24 @@ public class ConfigurationServiceImpl implements ConfigurationService {
         String hookURL = req.getParameter("hookURL");
         String channel = req.getParameter("channel");
         String userJSON = req.getParameter("userJSON");
-        Boolean notifyPRCreated = BooleanUtils.toBoolean(req.getParameter("notifyPRCreated"));
+        Boolean notifyPROpened = BooleanUtils.toBoolean(req.getParameter("notifyPROpened"));
+        Boolean notifyPRReopened = BooleanUtils.toBoolean(req.getParameter("notifyPRReopened"));
         Boolean notifyPRUpdated = BooleanUtils.toBoolean(req.getParameter("notifyPRUpdated"));
+        Boolean notifyPRRescoped = BooleanUtils.toBoolean(req.getParameter("notifyPRRescoped"));
         Boolean notifyPRMerged = BooleanUtils.toBoolean(req.getParameter("notifyPRMerged"));
         Boolean notifyPRDeclined = BooleanUtils.toBoolean(req.getParameter("notifyPRDeclined"));
         Boolean notifyPRCommented = BooleanUtils.toBoolean(req.getParameter("notifyPRCommented"));
+
 
         setRepositoryConfiguration(
                 repositoryId,
                 hookURL,
                 channel,
                 userJSON,
-                notifyPRCreated,
+                notifyPROpened,
+                notifyPRReopened,
                 notifyPRUpdated,
+                notifyPRRescoped,
                 notifyPRMerged,
                 notifyPRDeclined,
                 notifyPRCommented
@@ -78,8 +83,10 @@ public class ConfigurationServiceImpl implements ConfigurationService {
                                            String hookURL,
                                            String channel,
                                            String userJSON,
-                                           Boolean notifyPRCreated,
+                                           Boolean notifyPROpened,
+                                           Boolean notifyPRReopened,
                                            Boolean notifyPRUpdated,
+                                           Boolean notifyPRRescoped,
                                            Boolean notifyPRMerged,
                                            Boolean notifyPRDeclined,
                                            Boolean notifyPRCommented) throws SQLException,
@@ -97,8 +104,10 @@ public class ConfigurationServiceImpl implements ConfigurationService {
                     new DBParam("HOOK_URL", hookURL),
                     new DBParam("CHANNEL", channel),
                     new DBParam("USER_JSON", userJSON),
-                    new DBParam("NOTIFY_PR_CREATED", notifyPRCreated),
+                    new DBParam("NOTIFY_PR_OPENED", notifyPROpened),
+                    new DBParam("NOTIFY_PR_REOPENED", notifyPRReopened),
                     new DBParam("NOTIFY_PR_UPDATED", notifyPRUpdated),
+                    new DBParam("NOTIFY_PR_RESCOPED", notifyPRRescoped),
                     new DBParam("NOTIFY_PR_MERGED", notifyPRMerged),
                     new DBParam("NOTIFY_PR_DECLINED", notifyPRDeclined),
                     new DBParam("NOTIFY_PR_COMMENTED", notifyPRCommented)
@@ -110,8 +119,10 @@ public class ConfigurationServiceImpl implements ConfigurationService {
         configuration.setHookURL(hookURL);
         configuration.setChannel(channel);
         configuration.setUserJSON(userJSON);
-        configuration.setNotifyPRCreated(notifyPRCreated);
+        configuration.setNotifyPROpened(notifyPROpened);
+        configuration.setNotifyPRReopend(notifyPRReopened);
         configuration.setNotifyPRUpdated(notifyPRUpdated);
+        configuration.setNotifyPRRescoped(notifyPRRescoped);
         configuration.setNotifyPRMerged(notifyPRMerged);
         configuration.setNotifyPRDeclined(notifyPRDeclined);
         configuration.setNotifyPRCommented(notifyPRCommented);

@@ -29,13 +29,23 @@ public interface RepositoryConfiguration extends Entity {
 
     @NotNull
     @Default("true")
-    public Boolean getNotifyPRCreated();
-    public void setNotifyPRCreated(Boolean notifyPRCreated);
+    public Boolean getNotifyPROpened();
+    public void setNotifyPROpened(Boolean notifyPROpened);
+
+    @NotNull
+    @Default("true")
+    public Boolean getNotifyPRReopened();
+    public void setNotifyPRReopend(Boolean notifyPRReopend);
 
     @NotNull
     @Default("true")
     public Boolean getNotifyPRUpdated();
     public void setNotifyPRUpdated(Boolean notifyPRUpdated);
+
+    @NotNull
+    @Default("true")
+    public Boolean getNotifyPRRescoped();
+    public void setNotifyPRRescoped(Boolean notifyPRRescoped);
 
     @NotNull
     @Default("true")

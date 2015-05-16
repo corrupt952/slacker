@@ -73,6 +73,11 @@ public class PullRequestListener {
         notifySlack(event);
     }
 
+    @EventListener
+    public void listenPullRequestRescopedEvent(PullRequestRescopedEvent event) {
+        notifySlack(event);
+    }
+
     public void notifySlack(PullRequestEvent event) {
         String username = event.getUser().getDisplayName();
         String repoName = event.getPullRequest().getToRef().getRepository().getName();
@@ -107,39 +112,44 @@ public class PullRequestListener {
         }
 
         if (action == PullRequestAction.OPENED) {
-            if (!configuration.getNotifyPRCreated()) return;
+            if (!configuration.getNotifyPROpened()) return;
 
             String title = event.getPullRequest().getTitle();
             Attachment attachment = new Attachment();
 
-            attachment.pretext = String.format("%s さんが %s に<%s|PR %d>をオープンしました。", username, repoName, url, id);
-            attachment.fallback = String.format("%s さんが %s にPR %dをオープンしました。 - %s - %s", username, repoName, id, url, title);
+            attachment.pretext = String.format("%s opened PullRequest <%s|#%d> on %s", username, url, id, repoName);
+            attachment.fallback = String.format("%s opened PullRequest #%d on %s - %s - %s", username, id, repoName, url, title);
             attachment.title = event.getPullRequest().getTitle();
             attachment.title_link = url;
             attachment.color = "#36a64f";
             attachment.text = event.getPullRequest().getDescription();
             payload.attachments.add(attachment);
         } else if (action == PullRequestAction.REOPENED) {
-            if (!configuration.getNotifyPRCreated()) return;
+            if (!configuration.getNotifyPRReopened()) return;
 
-            payload.text = String.format("%s さんが %s の<%s|PR %d>を再オープンしました。", username, repoName, url, id);
+            payload.text = String.format("%s reopened PullRequest <%s|#%d> on %s", username, url, id, repoName);
         } else if (action == PullRequestAction.MERGED) {
             if (!configuration.getNotifyPRMerged()) return;
 
-            payload.text = String.format("%s さんが %s の<%s|PR %d>をマージしました。", username, repoName, url, id);
+            payload.text = String.format("%s merged PullRequest <%s|#%d> on %s", username, url, id, repoName);
         } else if (action == PullRequestAction.DECLINED) {
             if (!configuration.getNotifyPRDeclined()) return;
 
-            payload.text = String.format("%s さんが %s の<%s|PR %d>を却下しました。", username, repoName, url, id);
+            payload.text = String.format("%s declined PullRequest <%s|#%d> on %s", username, url, id, repoName);
         } else if (action == PullRequestAction.UPDATED) {
             if (!configuration.getNotifyPRUpdated()) return;
 
-            payload.text = String.format("%s さんが %s の<%s|PR %d>を更新しました。", username, repoName, url, id);
+            payload.text = String.format("%s updated PullRequest <%s|#%d> on %s", username, url, id, repoName);
+        } else if (action == PullRequestAction.RESCOPED) {
+            if (!configuration.getNotifyPRRescoped()) return;
+
+            payload.text = String.format("%s rescoped PullRequest <%s|#%s> on %s", username, url, id, repoName);
         } else if(action == PullRequestAction.COMMENTED) {
             if (!configuration.getNotifyPRCommented()) return;
             if (StringUtils.isBlank(configuration.getUserJSON())) return;
 
             PullRequestCommentEvent commentEvent = (PullRequestCommentEvent) event;
+            Map<String, String> userMap = new Gson().fromJson(configuration.getUserJSON(), HashMap.class);
             StashUser author = null;
             StashUser user = null;
             if (event instanceof PullRequestCommentAddedEvent) {
@@ -150,15 +160,15 @@ public class PullRequestListener {
                 user = commentEvent.getUser();
             }
 
-            Map<String, String> userMap = new Gson().fromJson(configuration.getUserJSON(), HashMap.class);
             if (author == null || !userMap.containsKey(author.getName()) ||
-                    user == null || !userMap.containsKey(user.getName())) return;
+                    user == null || !userMap.containsKey(user.getName()) || user.getId() == author.getId()) return;
+
             String commentUrl = String.format("%s?commentId=%d", url, commentEvent.getComment().getId());
 
             payload.channel = String.format("@%s", userMap.get(author.getName()));
             payload.username = userMap.get(user.getName());
-            payload.text = String.format("%s さんから %s の<%s|PR %d>に<%s|コメント>がありました。",
-                                         username, repo.getName(), url, id, commentUrl);
+            payload.text = String.format("%s commented to PullRequest <%s|#%d> on %s: <%s|Show>",
+                                         username, url, id, repoName, commentUrl);
         } else return;
 
         try {

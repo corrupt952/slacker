@@ -24,11 +24,12 @@ public interface ConfigurationService {
                                                     String hookURL,
                                                     String channel,
                                                     String userJSON,
-                                                    Boolean notifyPRCreated,
+                                                    Boolean notifyPROepened,
+                                                    Boolean notifyPRReopened,
                                                     Boolean notifyPRUpdated,
+                                                    Boolean notifyPRReescoped,
                                                     Boolean notifyPRMerged,
                                                     Boolean notifyPRDeclined,
-                                                    Boolean notifyPRCommented
-                                                    ) throws SQLException,
+                                                    Boolean notifyPRCommented) throws SQLException,
             NullArgumentException;
 }

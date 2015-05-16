@@ -5,8 +5,10 @@
  * @param hookURL
  * @param channel
  * @param userJSON
- * @param notifyPRCreated
+ * @param notifyPROpened
+ * @param notifyPRReopened
  * @param notifyPRUpdated
+ * @param notifyPRRescoped
  * @param notifyPRMerged
  * @param notifyPRDeclined
  * @param notifyPRCommented
@@ -50,26 +52,42 @@
                         {/call}
                         <h3>PullRequest Notify Settings</h3>
                         {call aui.form.checkboxField}
-                            {param legendContent: stash_i18n('stash.web.stash.notify-pullrequest-created.button.description', 'Created') /}
+                            {param legendContent: stash_i18n('stash.web.stash.notify-pullrequest-opended.button.description', 'Opened') /}
                             {param fields: [[
-                                'id': 'notifyPRCreated',
-                                'labelText': stash_i18n('stash.web.stash.notify-pullrequest-created.button.label', 'Enabled'),
-                                'isChecked': $notifyPRCreated
+                                'id': 'notifyPROpened',
+                                'labelText': stash_i18n('stash.web.stash.notify-pullrequest-opened.button.label', 'Notify'),
+                                'isChecked': $notifyPROpened
+                            ]] /}
+                        {/call}
+                        {call aui.form.checkboxField}
+                            {param legendContent: stash_i18n('stash.web.stash.notify-pullrequest-reopened.button.description', 'Reopened') /}
+                            {param fields: [[
+                                'id': 'notifyPRRopened',
+                                'labelText': stash_i18n('stash.web.stash.notify-pullrequest-reopened.button.label', 'Notify'),
+                                'isChecked': $notifyPRReopened
                             ]] /}
                         {/call}
                         {call aui.form.checkboxField}
                             {param legendContent: stash_i18n('stash.web.stash.notify-pullrequest-updated.button.description', 'Updated') /}
                             {param fields: [[
                                 'id': 'notifyPRUpdated',
-                                'labelText': stash_i18n('stash.web.stash.notify-pullrequest-updated.button.label', 'Enabled'),
+                                'labelText': stash_i18n('stash.web.stash.notify-pullrequest-updated.button.label', 'Notify'),
                                 'isChecked': $notifyPRUpdated
+                            ]] /}
+                        {/call}
+                        {call aui.form.checkboxField}
+                            {param legendContent: stash_i18n('stash.web.stash.notify-pullrequest-rescoped.button.description', 'Rescoped') /}
+                            {param fields: [[
+                                'id': 'notifyPRRescoped',
+                                'labelText': stash_i18n('stash.web.stash.notify-pullrequest-rescoped.button.label', 'Notify'),
+                                'isChecked': $notifyPRRescoped
                             ]] /}
                         {/call}
                         {call aui.form.checkboxField}
                             {param legendContent: stash_i18n('stash.web.stash.notify-pullrequest-merged.button.description', 'Merged') /}
                             {param fields: [[
                                 'id': 'notifyPRMerged',
-                                'labelText': stash_i18n('stash.web.stash.notify-pullrequest-merged.button.label', 'Enabled'),
+                                'labelText': stash_i18n('stash.web.stash.notify-pullrequest-merged.button.label', 'Notify'),
                                 'isChecked': $notifyPRMerged
                             ]] /}
                         {/call}
@@ -77,7 +95,7 @@
                             {param legendContent: stash_i18n('stash.web.stash.notify-pullrequest-declined.button.description', 'Declined') /}
                             {param fields: [[
                                 'id': 'notifyPRDeclined',
-                                'labelText': stash_i18n('stash.web.stash.notify-pullrequest-declined.button.label', 'Enabled'),
+                                'labelText': stash_i18n('stash.web.stash.notify-pullrequest-declined.button.label', 'Notify'),
                                 'isChecked': $notifyPRDeclined
                             ]] /}
                         {/call}
@@ -85,7 +103,7 @@
                             {param legendContent: stash_i18n('stash.web.stash.notify-pullrequest-commented.button.description', 'Commented') /}
                             {param fields: [[
                                 'id': 'notifyPRCommented',
-                                'labelText': stash_i18n('stash.web.stash.notify-pullrequest-commented.button.label', 'Enabled'),
+                                'labelText': stash_i18n('stash.web.stash.notify-pullrequest-commented.button.label', 'Notify *Require "User Map JSON"'),
                                 'isChecked': $notifyPRCommented
                             ]] /}
                         {/call}

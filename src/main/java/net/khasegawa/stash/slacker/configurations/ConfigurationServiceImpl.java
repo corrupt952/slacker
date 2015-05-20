@@ -61,7 +61,8 @@ public class ConfigurationServiceImpl implements ConfigurationService {
         Boolean notifyPRMerged = BooleanUtils.toBoolean(req.getParameter("notifyPRMerged"));
         Boolean notifyPRDeclined = BooleanUtils.toBoolean(req.getParameter("notifyPRDeclined"));
         Boolean notifyPRCommented = BooleanUtils.toBoolean(req.getParameter("notifyPRCommented"));
-
+        Boolean ignoreWIP = BooleanUtils.toBoolean(req.getParameter("ignoreWIP"));
+        Boolean ignoreNotCrossRepository = BooleanUtils.toBoolean(req.getParameter("ignoreNotCrossRepository"));
 
         setRepositoryConfiguration(
                 repositoryId,
@@ -74,7 +75,9 @@ public class ConfigurationServiceImpl implements ConfigurationService {
                 notifyPRRescoped,
                 notifyPRMerged,
                 notifyPRDeclined,
-                notifyPRCommented
+                notifyPRCommented,
+                ignoreWIP,
+                ignoreNotCrossRepository
         );
     }
 
@@ -89,7 +92,9 @@ public class ConfigurationServiceImpl implements ConfigurationService {
                                            Boolean notifyPRRescoped,
                                            Boolean notifyPRMerged,
                                            Boolean notifyPRDeclined,
-                                           Boolean notifyPRCommented) throws SQLException,
+                                           Boolean notifyPRCommented,
+                                           Boolean ignoreWIP,
+                                           Boolean ignoreNotCrossRepository) throws SQLException,
             NullArgumentException {
         if (repositoryId == null ) throw new NullArgumentException("Repository ID is not null!");
 
@@ -110,7 +115,9 @@ public class ConfigurationServiceImpl implements ConfigurationService {
                     new DBParam("NOTIFY_PR_RESCOPED", notifyPRRescoped),
                     new DBParam("NOTIFY_PR_MERGED", notifyPRMerged),
                     new DBParam("NOTIFY_PR_DECLINED", notifyPRDeclined),
-                    new DBParam("NOTIFY_PR_COMMENTED", notifyPRCommented)
+                    new DBParam("NOTIFY_PR_COMMENTED", notifyPRCommented),
+                    new DBParam("IGNORE_WIP", ignoreWIP),
+                    new DBParam("IGNORE_NOT_CROSS_REPOSITORY", ignoreNotCrossRepository)
             );
             return;
         }
@@ -126,6 +133,8 @@ public class ConfigurationServiceImpl implements ConfigurationService {
         configuration.setNotifyPRMerged(notifyPRMerged);
         configuration.setNotifyPRDeclined(notifyPRDeclined);
         configuration.setNotifyPRCommented(notifyPRCommented);
+        configuration.setIgnoreWIP(ignoreWIP);
+        configuration.setIgnoreNotCrossRepository(ignoreNotCrossRepository);
         configuration.save();
     }
 }

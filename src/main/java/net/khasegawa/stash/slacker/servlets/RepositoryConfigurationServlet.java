@@ -77,6 +77,8 @@ public class RepositoryConfigurationServlet extends HttpServlet {
                             .put("notifyPRMerged", configuration.getNotifyPRMerged())
                             .put("notifyPRDeclined", configuration.getNotifyPRDeclined())
                             .put("notifyPRCommented", configuration.getNotifyPRCommented())
+                            .put("ignoreWIP", configuration.getIgnoreWIP())
+                            .put("ignoreNotCrossRepository", configuration.getIgnoreNotCrossRepository())
                             .build()
             );
         } catch (SoyException e) {

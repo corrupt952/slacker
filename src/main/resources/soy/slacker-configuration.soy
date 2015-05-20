@@ -12,6 +12,8 @@
  * @param notifyPRMerged
  * @param notifyPRDeclined
  * @param notifyPRCommented
+ * @param ignoreWIP
+ * @param ignoreNotCrossRepository
  **/
 {template .slackerConfigurationPanel}
 <html>
@@ -40,71 +42,90 @@
                         <h3>General Settings</h3>
                         {call aui.form.textField}
                             {param id: 'hookURL' /}
-                            {param labelContent: stash_i18n('stash.web.stash.hookURL.label', 'Incomming Webhook URL') /}
+                            {param labelContent: 'Webhook URL' /}
+                            {param required: true /}
                             {param value: $hookURL /}
-                            {param descriptionText: stash_i18n('stash.web.stash.hookURL.description', 'Slack Incomming Webhook URL') /}
+                            {param descriptionText: 'Slack Incomming Webhook URL' /}
                         {/call}
                         {call aui.form.textField}
                             {param id: 'channel' /}
-                            {param labelContent: stash_i18n('stash.web.stash.channel.label', 'Channel') /}
+                            {param labelContent: 'Channel' /}
                             {param value: $channel /}
-                            {param descriptionText: stash_i18n('stash.web.stash.channel.description', 'Channel(example: #random)') /}
+                            {param descriptionText: 'Channel(or UserID)' /}
                         {/call}
-                        <h3>PullRequest Notify Settings</h3>
+
+                        <h3>PullRequest Notification Settings</h3>
                         {call aui.form.checkboxField}
-                            {param legendContent: stash_i18n('stash.web.stash.notify-pullrequest-opended.button.description', 'Opened') /}
+                            {param legendContent: 'Events' /}
                             {param fields: [[
                                 'id': 'notifyPROpened',
-                                'labelText': stash_i18n('stash.web.stash.notify-pullrequest-opened.button.label', 'Notify'),
+                                'labelText': 'Opened',
                                 'isChecked': $notifyPROpened
                             ]] /}
                         {/call}
                         {call aui.form.checkboxField}
-                            {param legendContent: stash_i18n('stash.web.stash.notify-pullrequest-reopened.button.description', 'Reopened') /}
+                            {param legendContent: '' /}
                             {param fields: [[
                                 'id': 'notifyPRRopened',
-                                'labelText': stash_i18n('stash.web.stash.notify-pullrequest-reopened.button.label', 'Notify'),
+                                'labelText': 'Reopened',
                                 'isChecked': $notifyPRReopened
                             ]] /}
                         {/call}
                         {call aui.form.checkboxField}
-                            {param legendContent: stash_i18n('stash.web.stash.notify-pullrequest-updated.button.description', 'Updated') /}
+                            {param legendContent: '' /}
                             {param fields: [[
                                 'id': 'notifyPRUpdated',
-                                'labelText': stash_i18n('stash.web.stash.notify-pullrequest-updated.button.label', 'Notify'),
+                                'labelText': 'Updated',
                                 'isChecked': $notifyPRUpdated
                             ]] /}
                         {/call}
                         {call aui.form.checkboxField}
-                            {param legendContent: stash_i18n('stash.web.stash.notify-pullrequest-rescoped.button.description', 'Rescoped') /}
+                            {param legendContent: '' /}
                             {param fields: [[
                                 'id': 'notifyPRRescoped',
-                                'labelText': stash_i18n('stash.web.stash.notify-pullrequest-rescoped.button.label', 'Notify'),
+                                'labelText': 'Rescoped',
                                 'isChecked': $notifyPRRescoped
                             ]] /}
                         {/call}
                         {call aui.form.checkboxField}
-                            {param legendContent: stash_i18n('stash.web.stash.notify-pullrequest-merged.button.description', 'Merged') /}
+                            {param legendContent: '' /}
                             {param fields: [[
                                 'id': 'notifyPRMerged',
-                                'labelText': stash_i18n('stash.web.stash.notify-pullrequest-merged.button.label', 'Notify'),
+                                'labelText': 'Merged',
                                 'isChecked': $notifyPRMerged
                             ]] /}
                         {/call}
                         {call aui.form.checkboxField}
-                            {param legendContent: stash_i18n('stash.web.stash.notify-pullrequest-declined.button.description', 'Declined') /}
+                            {param legendContent: '' /}
                             {param fields: [[
                                 'id': 'notifyPRDeclined',
-                                'labelText': stash_i18n('stash.web.stash.notify-pullrequest-declined.button.label', 'Notify'),
+                                'labelText': 'Declined',
                                 'isChecked': $notifyPRDeclined
                             ]] /}
                         {/call}
                         {call aui.form.checkboxField}
-                            {param legendContent: stash_i18n('stash.web.stash.notify-pullrequest-commented.button.description', 'Commented') /}
+                            {param legendContent: '' /}
                             {param fields: [[
                                 'id': 'notifyPRCommented',
-                                'labelText': stash_i18n('stash.web.stash.notify-pullrequest-commented.button.label', 'Notify *Require "User Map JSON"'),
+                                'labelText': 'Commented',
                                 'isChecked': $notifyPRCommented
+                            ]] /}
+                            {param descriptionText: 'Require "User Map JSON"' /}
+                        {/call}
+                        {call aui.form.checkboxField}
+                            {param legendContent: 'Silent' /}
+                            {param fields: [[
+                                'id': 'ignoreWIP',
+                                'labelText': 'WIP(Work In Progress)',
+                                'isChecked': $ignoreWIP
+                            ]] /}
+                        {/call}
+                        {call aui.form.checkboxField}
+                            {param legendContent: '' /}
+                            {param fields: [[
+                                'id': 'ignoreNotCrossRepository',
+                                'labelText': 'Not cross-repository PullRequest',
+                                'isChecked': $ignoreNotCrossRepository
                             ]] /}
                         {/call}
 

@@ -61,4 +61,14 @@ public interface RepositoryConfiguration extends Entity {
     @Default("true")
     public Boolean getNotifyPRCommented();
     public void setNotifyPRCommented(Boolean notifyPRCommented);
+
+    @NotNull
+    @Default("false")
+    public Boolean getIgnoreWIP();
+    public void setIgnoreWIP(Boolean ignoreWIP);
+
+    @NotNull
+    @Default("false")
+    public Boolean getIgnoreNotCrossRepository();
+    public void setIgnoreNotCrossRepository(Boolean ignoreNotCrossRepository);
 }

@@ -20,6 +20,7 @@ import java.nio.charset.Charset;
 import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.regex.Pattern;
 
 /**
  * Created by Kazuki Hasegawa on 15/02/04.
@@ -104,6 +105,16 @@ public class PullRequestListener {
         }
         if (StringUtils.isBlank(configuration.getHookURL())) {
             logger.warn("Slack hook url is blank.");
+            return;
+        }
+        if (configuration.getIgnoreWIP() &&
+                Pattern.compile("^\\[?WIP\\]?").matcher(event.getPullRequest().getTitle()).find()) {
+            // nothing
+            return;
+        }
+        if (configuration.getIgnoreNotCrossRepository() &&
+                !event.getPullRequest().isCrossRepository()) {
+            // nothing
             return;
         }
 

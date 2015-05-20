@@ -30,6 +30,8 @@ public interface ConfigurationService {
                                                     Boolean notifyPRReescoped,
                                                     Boolean notifyPRMerged,
                                                     Boolean notifyPRDeclined,
-                                                    Boolean notifyPRCommented) throws SQLException,
+                                                    Boolean notifyPRCommented,
+                                                    Boolean ignoreWIP,
+                                                    Boolean ignoreNotCrossRepository) throws SQLException,
             NullArgumentException;
 }

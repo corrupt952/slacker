@@ -1,10 +1,7 @@
 package net.khasegawa.stash.slacker.activeobjects;
 
 import net.java.ao.Entity;
-import net.java.ao.schema.Default;
-import net.java.ao.schema.NotNull;
-import net.java.ao.schema.Table;
-import net.java.ao.schema.Unique;
+import net.java.ao.schema.*;
 
 /**
  * Created by Kazuki Hasegawa on 14/05/15.
@@ -25,6 +22,7 @@ public interface RepositoryConfiguration extends Entity {
     public void setChannel(String channel);
 
     public String getUserJSON();
+    @StringLength(value=StringLength.UNLIMITED)
     public void setUserJSON(String userJSON);
 
     @NotNull

@@ -31,9 +31,11 @@ public class ConfigurationServiceImpl implements ConfigurationService {
     private final RepositoryService repositoryService;
 
     public ConfigurationServiceImpl(ActiveObjects activeObjects,
-                                    ProjectService projectService) throws NullArgumentException {
+                                    ProjectService projectService,
+                                    RepositoryService repositoryService) throws NullArgumentException {
         this.activeObjects = activeObjects;
         this.projectService = projectService;
+        this.repositoryService = repositoryService;
     }
 
     @Override

@@ -7,7 +7,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>net.khasegawa.stash</groupId>
     <artifactId>slacker</artifactId>
-    <version>0.2.0</version>
+    <version>0.2.1</version>
 
     <name>Slacker</name>
     <description>This is the net.khasegawa.stash:slacker plugin for Atlassian Stash.</description>

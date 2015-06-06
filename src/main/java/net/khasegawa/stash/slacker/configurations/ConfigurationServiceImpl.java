@@ -1,8 +1,14 @@
 package net.khasegawa.stash.slacker.configurations;
 
 import com.atlassian.activeobjects.external.ActiveObjects;
+import com.atlassian.stash.project.Project;
+import com.atlassian.stash.project.ProjectService;
+import com.atlassian.stash.repository.Repository;
+import com.atlassian.stash.repository.RepositoryService;
+import com.atlassian.stash.util.PageRequestImpl;
 import net.java.ao.DBParam;
 import net.java.ao.Query;
+import net.khasegawa.stash.slacker.activeobjects.ProjectConfiguration;
 import net.khasegawa.stash.slacker.activeobjects.RepositoryConfiguration;
 import org.apache.commons.lang.NullArgumentException;
 import org.apache.commons.lang3.BooleanUtils;
@@ -15,15 +21,75 @@ import java.sql.SQLException;
 /**
  * Created by Kazuki Hasegawa on 14/05/15.
  *
- * @author kazuki hasegawa
+ * @author Kazuki Hasegawa
  */
 public class ConfigurationServiceImpl implements ConfigurationService {
     private static final Logger logger = LoggerFactory.getLogger(ConfigurationServiceImpl.class);
 
     private final ActiveObjects activeObjects;
+    private final ProjectService projectService;
+    private final RepositoryService repositoryService;
 
-    public ConfigurationServiceImpl(ActiveObjects activeObjects) throws NullArgumentException {
+    public ConfigurationServiceImpl(ActiveObjects activeObjects,
+                                    ProjectService projectService) throws NullArgumentException {
         this.activeObjects = activeObjects;
+        this.projectService = projectService;
+    }
+
+    @Override
+    public ProjectConfiguration getProjectConfiguration(Integer projectId) throws SQLException,
+            NullArgumentException {
+        if (projectId == null) throw new NullArgumentException("Project ID is not null!");
+
+        ProjectConfiguration[] configurations = getProjectConfigurations(projectId);
+        ProjectConfiguration configuration = null;
+        if (configurations.length == 0) {
+            configuration = activeObjects.create(
+                    ProjectConfiguration.class,
+                    new DBParam("PROJECT_ID", projectId),
+                    new DBParam("USER_MAP_JSON", "{ \"Stash UserID\": \"Slack UserID\" }")
+            );
+        } else {
+            configuration = configurations[0];
+        }
+
+        return configuration;
+    }
+
+    @Override
+    public void setProjectConfigurationByHttpServletRequest(Integer projectId,
+                                                            HttpServletRequest req) throws SQLException,
+            NullArgumentException,
+            NumberFormatException {
+        String hookURL = req.getParameter("hookURL");
+        String userMapJSON = req.getParameter("userMapJSON");
+
+        setProjectConfiguration(projectId, hookURL, userMapJSON);
+    }
+
+    @Override
+    public void setProjectConfiguration(Integer projectId,
+                                        String hookURL,
+                                        String userMapJSON) throws SQLException,
+            NullArgumentException {
+        if (projectId == null ) throw new NullArgumentException("Project ID is not null!");
+
+        ProjectConfiguration[] configurations = getProjectConfigurations(projectId);
+
+        if (configurations.length == 0) {
+            activeObjects.create(
+                    ProjectConfiguration.class,
+                    new DBParam("PROJECT_ID", projectId),
+                    new DBParam("HOOK_URL", hookURL),
+                    new DBParam("USER_MAP_JSON", userMapJSON)
+            );
+            return;
+        }
+
+        ProjectConfiguration configuration = configurations[0];
+        configuration.setHookURL(hookURL);
+        configuration.setUserMapJSON(userMapJSON);
+        configuration.save();
     }
 
     @Override
@@ -38,8 +104,7 @@ public class ConfigurationServiceImpl implements ConfigurationService {
         if (configurations.length == 0) {
             return activeObjects.create(
                     RepositoryConfiguration.class,
-                    new DBParam("REPOSITORY_ID", repositoryId),
-                    new DBParam("USER_JSON", "{ \"Stash UserID\": \"Slack UserID\" }")
+                    new DBParam("REPOSITORY_ID", repositoryId)
             );
         }
 
@@ -51,9 +116,7 @@ public class ConfigurationServiceImpl implements ConfigurationService {
                                                                HttpServletRequest req) throws SQLException,
             NullArgumentException,
             NumberFormatException {
-        String hookURL = req.getParameter("hookURL");
         String channel = req.getParameter("channel");
-        String userJSON = req.getParameter("userJSON");
         Boolean notifyPROpened = BooleanUtils.toBoolean(req.getParameter("notifyPROpened"));
         Boolean notifyPRReopened = BooleanUtils.toBoolean(req.getParameter("notifyPRReopened"));
         Boolean notifyPRUpdated = BooleanUtils.toBoolean(req.getParameter("notifyPRUpdated"));
@@ -66,9 +129,7 @@ public class ConfigurationServiceImpl implements ConfigurationService {
 
         setRepositoryConfiguration(
                 repositoryId,
-                hookURL,
                 channel,
-                userJSON,
                 notifyPROpened,
                 notifyPRReopened,
                 notifyPRUpdated,
@@ -83,9 +144,7 @@ public class ConfigurationServiceImpl implements ConfigurationService {
 
     @Override
     public void setRepositoryConfiguration(Integer repositoryId,
-                                           String hookURL,
                                            String channel,
-                                           String userJSON,
                                            Boolean notifyPROpened,
                                            Boolean notifyPRReopened,
                                            Boolean notifyPRUpdated,
@@ -106,9 +165,7 @@ public class ConfigurationServiceImpl implements ConfigurationService {
             activeObjects.create(
                     RepositoryConfiguration.class,
                     new DBParam("REPOSITORY_ID", repositoryId),
-                    new DBParam("HOOK_URL", hookURL),
                     new DBParam("CHANNEL", channel),
-                    new DBParam("USER_JSON", userJSON),
                     new DBParam("NOTIFY_PR_OPENED", notifyPROpened),
                     new DBParam("NOTIFY_PR_REOPENED", notifyPRReopened),
                     new DBParam("NOTIFY_PR_UPDATED", notifyPRUpdated),
@@ -123,9 +180,7 @@ public class ConfigurationServiceImpl implements ConfigurationService {
         }
 
         RepositoryConfiguration configuration = configurations[0];
-        configuration.setHookURL(hookURL);
         configuration.setChannel(channel);
-        configuration.setUserJSON(userJSON);
         configuration.setNotifyPROpened(notifyPROpened);
         configuration.setNotifyPRReopend(notifyPRReopened);
         configuration.setNotifyPRUpdated(notifyPRUpdated);
@@ -136,5 +191,12 @@ public class ConfigurationServiceImpl implements ConfigurationService {
         configuration.setIgnoreWIP(ignoreWIP);
         configuration.setIgnoreNotCrossRepository(ignoreNotCrossRepository);
         configuration.save();
+    }
+
+    private ProjectConfiguration[] getProjectConfigurations(Integer projectId) {
+        return activeObjects.find(
+                ProjectConfiguration.class,
+                Query.select().where("PROJECT_ID = ?", projectId)
+        );
     }
 }

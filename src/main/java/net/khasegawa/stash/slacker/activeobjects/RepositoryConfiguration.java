@@ -6,7 +6,7 @@ import net.java.ao.schema.*;
 /**
  * Created by Kazuki Hasegawa on 14/05/15.
  *
- * @author kazuki hasegawa
+ * @author Kazuki Hasegawa
  */
 @Table("SlakcerRepoConf")
 public interface RepositoryConfiguration extends Entity {
@@ -15,15 +15,8 @@ public interface RepositoryConfiguration extends Entity {
     public Integer getRepositoryId();
     public void setRepositoryId(Integer repositoryId);
 
-    public String getHookURL();
-    public void setHookURL(String hookURL);
-
     public String getChannel();
     public void setChannel(String channel);
-
-    public String getUserJSON();
-    @StringLength(value=StringLength.UNLIMITED)
-    public void setUserJSON(String userJSON);
 
     @NotNull
     @Default("true")

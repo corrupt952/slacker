@@ -63,13 +63,11 @@ public class RepositoryConfigurationServlet extends HttpServlet {
             this.soyTemplateRenderer.render(
                     resp.getWriter(),
                     "net.khasegawa.stash.slacker:slacker-configuration",
-                    "plugin.page.slacker.slackerConfigurationPanel",
+                    "plugin.page.slacker.slackerRepositoryConfigurationPanel",
                     ImmutableMap
                             .<String, Object>builder()
                             .put("repository", repository)
-                            .put("hookURL", StringUtils.defaultString(configuration.getHookURL()))
                             .put("channel", StringUtils.defaultString(configuration.getChannel()))
-                            .put("userJSON", StringUtils.defaultString(configuration.getUserJSON()))
                             .put("notifyPROpened", configuration.getNotifyPROpened())
                             .put("notifyPRReopened", configuration.getNotifyPRReopened())
                             .put("notifyPRUpdated", configuration.getNotifyPRUpdated())
@@ -125,8 +123,8 @@ public class RepositoryConfigurationServlet extends HttpServlet {
 
         path = path.startsWith("/") ? path.substring(1) : path;
         String[] paths = path.split("/");
-        if (paths.length != 3) return null;
+        if (paths.length != 2) return null;
 
-        return repositoryService.getBySlug(paths[1], paths[2]);
+        return repositoryService.getBySlug(paths[0], paths[1]);
     }
 }

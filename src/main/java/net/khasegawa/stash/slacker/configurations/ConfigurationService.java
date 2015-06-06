@@ -1,5 +1,6 @@
 package net.khasegawa.stash.slacker.configurations;
 
+import net.khasegawa.stash.slacker.activeobjects.ProjectConfiguration;
 import net.khasegawa.stash.slacker.activeobjects.RepositoryConfiguration;
 import org.apache.commons.lang.NullArgumentException;
 
@@ -12,6 +13,16 @@ import java.sql.SQLException;
  * @author Kazuki hasegawa
  */
 public interface ConfigurationService {
+    public abstract ProjectConfiguration getProjectConfiguration(Integer projectId) throws SQLException,
+            NullArgumentException;
+
+    public abstract void setProjectConfigurationByHttpServletRequest(Integer projectId,
+                                                                     HttpServletRequest req) throws SQLException;
+
+    public abstract  void setProjectConfiguration(Integer projectId,
+                                                  String hookURL,
+                                                  String userMapJson) throws  SQLException;
+
     public abstract RepositoryConfiguration getRepositoryConfiguration(Integer repositoryId) throws SQLException,
             NullArgumentException;
 
@@ -21,9 +32,7 @@ public interface ConfigurationService {
             NumberFormatException;
 
     public abstract void setRepositoryConfiguration(Integer repositoryId,
-                                                    String hookURL,
                                                     String channel,
-                                                    String userJSON,
                                                     Boolean notifyPROepened,
                                                     Boolean notifyPRReopened,
                                                     Boolean notifyPRUpdated,

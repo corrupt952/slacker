@@ -2,9 +2,7 @@
 
 /**
  * @param repository
- * @param hookURL
  * @param channel
- * @param userJSON
  * @param notifyPROpened
  * @param notifyPRReopened
  * @param notifyPRUpdated
@@ -15,21 +13,21 @@
  * @param ignoreWIP
  * @param ignoreNotCrossRepository
  **/
-{template .slackerConfigurationPanel}
+{template .slackerRepositoryConfigurationPanel}
 <html>
     <head>
       <meta name="decorator" content="stash.repository.settings">
       <meta name="projectKey" content="{$repository.project.key}">
       <meta name="repositorySlug" content="{$repository.slug}">
       <meta name="activeTab" content="repository-settings-git-ops-panel">
-      <title>{{stash_i18n('stash.web.repository.git-ops.title', 'Stashbot settings for {0} / {1}', $repository.project.name, $repository.name)}}</title>
+      <title>Slacker settings for {{$repository.project.name}} / {{$repository.name}}</title>
     </head>
     <body>
         {call aui.group.group}
             {param content}
                 {call aui.group.item}
                     {param content}
-                        <h2>{stash_i18n('stash.web.repository.slacker.heading', 'Slacker Settings')}</h2>
+                        <h2>{stash_i18n('stash.web.repository.slacker.heading', 'Slacker Repository Settings')}</h2>
                     {/param}
                 {/call}
             {/param}
@@ -40,13 +38,6 @@
                     {param action: '' /}
                     {param content}
                         <h3>General Settings</h3>
-                        {call aui.form.textField}
-                            {param id: 'hookURL' /}
-                            {param labelContent: 'Webhook URL' /}
-                            {param required: true /}
-                            {param value: $hookURL /}
-                            {param descriptionText: 'Slack Incomming Webhook URL' /}
-                        {/call}
                         {call aui.form.textField}
                             {param id: 'channel' /}
                             {param labelContent: 'Channel' /}
@@ -127,14 +118,6 @@
                                 'labelText': 'Not cross-repository PullRequest',
                                 'isChecked': $ignoreNotCrossRepository
                             ]] /}
-                        {/call}
-
-                        <h3>User Settings</h3>
-                        {call aui.form.textareaField}
-                            {param id: 'userJSON' /}
-                            {param labelContent: stash_i18n('stash.web.stash.user-json.label', 'User Map JSON') /}
-                            {param value: $userJSON /}
-                            {param descriptionext: stash_i18n('stash.web.stash.user-json.description', 'User Map JSON(example: "Stash User ID": "Slack User ID")') /}
                         {/call}
 
                         <br />

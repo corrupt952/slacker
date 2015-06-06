@@ -10,19 +10,24 @@
     <ao key="ao-module">
         <description>The AO module for this plugin.</description>
         <entity>net.khasegawa.stash.slacker.activeobjects.RepositoryConfiguration</entity>
+        <entity>net.khasegawa.stash.slacker.activeobjects.ProjectConfiguration</entity>
     </ao>
 
     <component-import key="activeObjects" interface="com.atlassian.activeobjects.external.ActiveObjects" />
     <component-import key="applicationPeropertiesService" interface="com.atlassian.stash.server.ApplicationPropertiesService" />
     <component-import key="permissionUserService" interface="com.atlassian.stash.user.PermissionValidationService" />
-    <component-import key="repositoryService" interface="com.atlassian.stash.repository.RepositoryService"/>
-    <component-import key="soyTemplateRenderer" interface="com.atlassian.soy.renderer.SoyTemplateRenderer"/>
+    <component-import key="projectService" interface="com.atlassian.stash.project.ProjectService" />
+    <component-import key="repositoryService" interface="com.atlassian.stash.repository.RepositoryService" />
+    <component-import key="soyTemplateRenderer" interface="com.atlassian.soy.renderer.SoyTemplateRenderer" />
 
     <component name="Slacker PullRequest listener" key="slacker-pullrequest-listener" class="net.khasegawa.stash.slacker.hooks.PullRequestListener" />
     <component name="Slacker Configuration Service" key="slacker-configuration-service" class="net.khasegawa.stash.slacker.configurations.ConfigurationServiceImpl" />
 
-    <servlet name="Slacker Configuration Servlet" key="slacker-configuration-servlet" class="net.khasegawa.stash.slacker.servlets.RepositoryConfigurationServlet">
-        <url-pattern>/slacker/*</url-pattern>
+    <servlet name="Slacker Project Configuration Servlet" key="slacker-project-configuration-servlet" class="net.khasegawa.stash.slacker.servlets.ProjectConfigurationServlet">
+        <url-pattern>/slacker/projects/*</url-pattern>
+    </servlet>
+    <servlet name="Slacker Repository Configuration Servlet" key="slacker-repository-configuration-servlet" class="net.khasegawa.stash.slacker.servlets.RepositoryConfigurationServlet">
+        <url-pattern>/slacker/repos/*</url-pattern>
     </servlet>
 
     <stash-resource key="slacker-configuration" name="Slacker Configuration Panel Resources">
@@ -31,7 +36,20 @@
         <dependency>com.atlassian.stash.stash-web-plugin:global</dependency>
     </stash-resource>
 
-    <web-item name="Slacker Settings" key="slacker-configuration-panel" section="stash.repository.settings.panel" weight="1000">
+    <web-item name="Slacker Settings" key="slacker-project-configuration-panel" section="stash.project.settings.panel" weight="1000">
+        <conditions type="OR">
+            <condition class="com.atlassian.stash.web.conditions.HasProjectPermissionCondition">
+                <param name="permission">PROJECT_ADMIN</param>
+            </condition>
+            <condition class="com.atlassian.stash.web.conditions.HasGlobalPermissionCondition">
+                <param name="permission">SYS_ADMIN</param>
+            </condition>
+        </conditions>
+        <label>Slacker Settings</label>
+        <link linkId="slack-notify-panel-link">/plugins/servlet/slacker/projects/${project.key}</link>
+    </web-item>
+
+    <web-item name="Slacker Settings" key="slacker-repository-configuration-panel" section="stash.repository.settings.panel" weight="1000">
         <conditions type="OR">
             <condition class="com.atlassian.stash.web.conditions.HasRepositoryPermissionCondition">
                 <param name="permission">REPO_ADMIN</param>
@@ -41,6 +59,6 @@
             </condition>
         </conditions>
         <label>Slacker Settings</label>
-        <link linkId="slack-notify-panel-link">/plugins/servlet/slacker/repos/${repository.project.key}/${repository.slug}</link>
+        <link linkId="slack-repository-notify-panel-link">/plugins/servlet/slacker/repos/${repository.project.key}/${repository.slug}</link>
     </web-item>
 </atlassian-plugin>

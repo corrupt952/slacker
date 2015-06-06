@@ -7,6 +7,7 @@ import com.atlassian.stash.repository.Repository;
 import com.atlassian.stash.server.ApplicationPropertiesService;
 import com.atlassian.stash.user.StashUser;
 import com.google.gson.Gson;
+import net.khasegawa.stash.slacker.activeobjects.ProjectConfiguration;
 import net.khasegawa.stash.slacker.activeobjects.RepositoryConfiguration;
 import net.khasegawa.stash.slacker.configurations.ConfigurationService;
 import org.apache.commons.lang3.StringUtils;
@@ -92,36 +93,28 @@ public class PullRequestListener {
 
         if (id == null) return;
 
+        ProjectConfiguration projectConfiguration = null;
         RepositoryConfiguration configuration = null;
         try {
+            projectConfiguration = configurationService.getProjectConfiguration(repo.getProject().getId());
             configuration = configurationService.getRepositoryConfiguration(repo.getId());
         } catch (SQLException e) {
             logger.error(e.getMessage());
             return;
         }
-        if (configuration == null) {
-            // nothing
-            return;
-        }
-        if (StringUtils.isBlank(configuration.getHookURL())) {
+        if (projectConfiguration == null) return;
+        if (configuration == null) return;
+        if (StringUtils.isBlank(projectConfiguration.getHookURL())) {
             logger.warn("Slack hook url is blank.");
             return;
         }
         if (configuration.getIgnoreWIP() &&
-                Pattern.compile("^\\[?WIP\\]?").matcher(event.getPullRequest().getTitle()).find()) {
-            // nothing
-            return;
-        }
-        if (configuration.getIgnoreNotCrossRepository() &&
-                !event.getPullRequest().isCrossRepository()) {
-            // nothing
-            return;
-        }
+                Pattern.compile("^\\[?WIP\\]?").matcher(event.getPullRequest().getTitle()).find()) return;
+        if (configuration.getIgnoreNotCrossRepository() && !event.getPullRequest().isCrossRepository()) return;
 
         if (StringUtils.isNotBlank(configuration.getChannel())) {
             payload.channel = String.format("%s", configuration.getChannel());
         }
-
         if (action == PullRequestAction.OPENED) {
             if (!configuration.getNotifyPROpened()) return;
 
@@ -157,10 +150,10 @@ public class PullRequestListener {
             payload.text = String.format("%s rescoped PullRequest <%s|#%s> on %s", username, url, id, repoName);
         } else if(action == PullRequestAction.COMMENTED) {
             if (!configuration.getNotifyPRCommented()) return;
-            if (StringUtils.isBlank(configuration.getUserJSON())) return;
+            if (StringUtils.isBlank(projectConfiguration.getUserMapJSON())) return;
 
             PullRequestCommentEvent commentEvent = (PullRequestCommentEvent) event;
-            Map<String, String> userMap = new Gson().fromJson(configuration.getUserJSON(), HashMap.class);
+            Map<String, String> userMap = new Gson().fromJson(projectConfiguration.getUserMapJSON(), HashMap.class);
             StashUser author = null;
             StashUser user = null;
             if (event instanceof PullRequestCommentAddedEvent) {
@@ -186,7 +179,7 @@ public class PullRequestListener {
             Gson gson = new Gson();
             Form form = Form.form().add("payload", gson.toJson(payload));
             HttpResponse response = Request
-                    .Post(configuration.getHookURL())
+                    .Post(projectConfiguration.getHookURL())
                     .bodyForm(form.build(), Charset.forName("UTF-8"))
                     .execute()
                     .returnResponse();

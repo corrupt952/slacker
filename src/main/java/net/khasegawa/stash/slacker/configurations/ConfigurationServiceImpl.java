@@ -184,7 +184,7 @@ public class ConfigurationServiceImpl implements ConfigurationService {
         RepositoryConfiguration configuration = configurations[0];
         configuration.setChannel(channel);
         configuration.setNotifyPROpened(notifyPROpened);
-        configuration.setNotifyPRReopend(notifyPRReopened);
+        configuration.setNotifyPRReopened(notifyPRReopened);
         configuration.setNotifyPRUpdated(notifyPRUpdated);
         configuration.setNotifyPRRescoped(notifyPRRescoped);
         configuration.setNotifyPRMerged(notifyPRMerged);

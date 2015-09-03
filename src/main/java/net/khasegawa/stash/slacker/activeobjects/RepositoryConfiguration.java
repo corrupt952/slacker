@@ -26,7 +26,7 @@ public interface RepositoryConfiguration extends Entity {
     @NotNull
     @Default("true")
     public Boolean getNotifyPRReopened();
-    public void setNotifyPRReopend(Boolean notifyPRReopend);
+    public void setNotifyPRReopened(Boolean notifyPRReopened);
 
     @NotNull
     @Default("true")

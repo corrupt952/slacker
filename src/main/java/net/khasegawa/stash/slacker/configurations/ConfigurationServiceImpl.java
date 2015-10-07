@@ -1,11 +1,8 @@
 package net.khasegawa.stash.slacker.configurations;
 
 import com.atlassian.activeobjects.external.ActiveObjects;
-import com.atlassian.stash.project.Project;
 import com.atlassian.stash.project.ProjectService;
-import com.atlassian.stash.repository.Repository;
 import com.atlassian.stash.repository.RepositoryService;
-import com.atlassian.stash.util.PageRequestImpl;
 import net.java.ao.DBParam;
 import net.java.ao.Query;
 import net.khasegawa.stash.slacker.activeobjects.ProjectConfiguration;
@@ -64,14 +61,48 @@ public class ConfigurationServiceImpl implements ConfigurationService {
             NullArgumentException,
             NumberFormatException {
         String hookURL = req.getParameter("hookURL");
+        String channel = req.getParameter("channel");
+        Boolean notifyPROpened = BooleanUtils.toBoolean(req.getParameter("notifyPROpened"));
+        Boolean notifyPRReopened = BooleanUtils.toBoolean(req.getParameter("notifyPRReopened"));
+        Boolean notifyPRUpdated = BooleanUtils.toBoolean(req.getParameter("notifyPRUpdated"));
+        Boolean notifyPRRescoped = BooleanUtils.toBoolean(req.getParameter("notifyPRRescoped"));
+        Boolean notifyPRMerged = BooleanUtils.toBoolean(req.getParameter("notifyPRMerged"));
+        Boolean notifyPRDeclined = BooleanUtils.toBoolean(req.getParameter("notifyPRDeclined"));
+        Boolean notifyPRCommented = BooleanUtils.toBoolean(req.getParameter("notifyPRCommented"));
+        Boolean ignoreWIP = BooleanUtils.toBoolean(req.getParameter("ignoreWIP"));
+        Boolean ignoreNotCrossRepository = BooleanUtils.toBoolean(req.getParameter("ignoreNotCrossRepository"));
         String userMapJSON = req.getParameter("userMapJSON");
 
-        setProjectConfiguration(projectId, hookURL, userMapJSON);
+        setProjectConfiguration(
+            projectId,
+            hookURL,
+            channel,
+            notifyPROpened,
+            notifyPRReopened,
+            notifyPRUpdated,
+            notifyPRRescoped,
+            notifyPRMerged,
+            notifyPRDeclined,
+            notifyPRCommented,
+            ignoreWIP,
+            ignoreNotCrossRepository,
+            userMapJSON
+        );
     }
 
     @Override
     public void setProjectConfiguration(Integer projectId,
                                         String hookURL,
+                                        String channel,
+                                        Boolean notifyPROpened,
+                                        Boolean notifyPRReopened,
+                                        Boolean notifyPRUpdated,
+                                        Boolean notifyPRRescoped,
+                                        Boolean notifyPRMerged,
+                                        Boolean notifyPRDeclined,
+                                        Boolean notifyPRCommented,
+                                        Boolean ignoreWIP,
+                                        Boolean ignoreNotCrossRepository,
                                         String userMapJSON) throws SQLException,
             NullArgumentException {
         if (projectId == null ) throw new NullArgumentException("Project ID is not null!");
@@ -83,6 +114,16 @@ public class ConfigurationServiceImpl implements ConfigurationService {
                     ProjectConfiguration.class,
                     new DBParam("PROJECT_ID", projectId),
                     new DBParam("HOOK_URL", hookURL),
+                    new DBParam("CHANNEL", channel),
+                    new DBParam("NOTIFY_PR_OPENED", notifyPROpened),
+                    new DBParam("NOTIFY_PR_REOPENED", notifyPRReopened),
+                    new DBParam("NOTIFY_PR_UPDATED", notifyPRUpdated),
+                    new DBParam("NOTIFY_PR_RESCOPED", notifyPRRescoped),
+                    new DBParam("NOTIFY_PR_MERGED", notifyPRMerged),
+                    new DBParam("NOTIFY_PR_DECLINED", notifyPRDeclined),
+                    new DBParam("NOTIFY_PR_COMMENTED", notifyPRCommented),
+                    new DBParam("IGNORE_WIP", ignoreWIP),
+                    new DBParam("IGNORE_NOT_CROSS_REPOSITORY", ignoreNotCrossRepository),
                     new DBParam("USER_MAP_JSON", userMapJSON)
             );
             return;
@@ -90,6 +131,16 @@ public class ConfigurationServiceImpl implements ConfigurationService {
 
         ProjectConfiguration configuration = configurations[0];
         configuration.setHookURL(hookURL);
+        configuration.setChannel(channel);
+        configuration.setNotifyPROpened(notifyPROpened);
+        configuration.setNotifyPRReopened(notifyPRReopened);
+        configuration.setNotifyPRUpdated(notifyPRUpdated);
+        configuration.setNotifyPRRescoped(notifyPRRescoped);
+        configuration.setNotifyPRMerged(notifyPRMerged);
+        configuration.setNotifyPRDeclined(notifyPRDeclined);
+        configuration.setNotifyPRCommented(notifyPRCommented);
+        configuration.setIgnoreWIP(ignoreWIP);
+        configuration.setIgnoreNotCrossRepository(ignoreNotCrossRepository);
         configuration.setUserMapJSON(userMapJSON);
         configuration.save();
     }
@@ -106,7 +157,8 @@ public class ConfigurationServiceImpl implements ConfigurationService {
         if (configurations.length == 0) {
             return activeObjects.create(
                     RepositoryConfiguration.class,
-                    new DBParam("REPOSITORY_ID", repositoryId)
+                    new DBParam("REPOSITORY_ID", repositoryId),
+                    new DBParam("USER_MAP_JSON", "{ \"Stash UserID\": \"Slack UserID\" }")
             );
         }
 
@@ -118,6 +170,7 @@ public class ConfigurationServiceImpl implements ConfigurationService {
                                                                HttpServletRequest req) throws SQLException,
             NullArgumentException,
             NumberFormatException {
+        String hookURL = req.getParameter("hookURL");
         String channel = req.getParameter("channel");
         Boolean notifyPROpened = BooleanUtils.toBoolean(req.getParameter("notifyPROpened"));
         Boolean notifyPRReopened = BooleanUtils.toBoolean(req.getParameter("notifyPRReopened"));
@@ -128,9 +181,11 @@ public class ConfigurationServiceImpl implements ConfigurationService {
         Boolean notifyPRCommented = BooleanUtils.toBoolean(req.getParameter("notifyPRCommented"));
         Boolean ignoreWIP = BooleanUtils.toBoolean(req.getParameter("ignoreWIP"));
         Boolean ignoreNotCrossRepository = BooleanUtils.toBoolean(req.getParameter("ignoreNotCrossRepository"));
+        String userMapJSON = req.getParameter("userMapJSON");
 
         setRepositoryConfiguration(
                 repositoryId,
+                hookURL,
                 channel,
                 notifyPROpened,
                 notifyPRReopened,
@@ -140,12 +195,14 @@ public class ConfigurationServiceImpl implements ConfigurationService {
                 notifyPRDeclined,
                 notifyPRCommented,
                 ignoreWIP,
-                ignoreNotCrossRepository
+                ignoreNotCrossRepository,
+                userMapJSON
         );
     }
 
     @Override
     public void setRepositoryConfiguration(Integer repositoryId,
+                                           String hookURL,
                                            String channel,
                                            Boolean notifyPROpened,
                                            Boolean notifyPRReopened,
@@ -155,7 +212,8 @@ public class ConfigurationServiceImpl implements ConfigurationService {
                                            Boolean notifyPRDeclined,
                                            Boolean notifyPRCommented,
                                            Boolean ignoreWIP,
-                                           Boolean ignoreNotCrossRepository) throws SQLException,
+                                           Boolean ignoreNotCrossRepository,
+                                           String userMapJSON) throws  SQLException,
             NullArgumentException {
         if (repositoryId == null ) throw new NullArgumentException("Repository ID is not null!");
 
@@ -167,6 +225,7 @@ public class ConfigurationServiceImpl implements ConfigurationService {
             activeObjects.create(
                     RepositoryConfiguration.class,
                     new DBParam("REPOSITORY_ID", repositoryId),
+                    new DBParam("HOOK_URL", hookURL),
                     new DBParam("CHANNEL", channel),
                     new DBParam("NOTIFY_PR_OPENED", notifyPROpened),
                     new DBParam("NOTIFY_PR_REOPENED", notifyPRReopened),
@@ -176,12 +235,14 @@ public class ConfigurationServiceImpl implements ConfigurationService {
                     new DBParam("NOTIFY_PR_DECLINED", notifyPRDeclined),
                     new DBParam("NOTIFY_PR_COMMENTED", notifyPRCommented),
                     new DBParam("IGNORE_WIP", ignoreWIP),
-                    new DBParam("IGNORE_NOT_CROSS_REPOSITORY", ignoreNotCrossRepository)
+                    new DBParam("IGNORE_NOT_CROSS_REPOSITORY", ignoreNotCrossRepository),
+                    new DBParam("USER_MAP_JSON", userMapJSON)
             );
             return;
         }
 
         RepositoryConfiguration configuration = configurations[0];
+        configuration.setHookURL(hookURL);
         configuration.setChannel(channel);
         configuration.setNotifyPROpened(notifyPROpened);
         configuration.setNotifyPRReopened(notifyPRReopened);
@@ -192,6 +253,7 @@ public class ConfigurationServiceImpl implements ConfigurationService {
         configuration.setNotifyPRCommented(notifyPRCommented);
         configuration.setIgnoreWIP(ignoreWIP);
         configuration.setIgnoreNotCrossRepository(ignoreNotCrossRepository);
+        configuration.setUserMapJSON(userMapJSON);
         configuration.save();
     }
 

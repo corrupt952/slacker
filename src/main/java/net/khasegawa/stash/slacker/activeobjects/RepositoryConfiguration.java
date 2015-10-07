@@ -15,6 +15,9 @@ public interface RepositoryConfiguration extends Entity {
     public Integer getRepositoryId();
     public void setRepositoryId(Integer repositoryId);
 
+    public String getHookURL();
+    public void setHookURL(String hookURL);
+
     public String getChannel();
     public void setChannel(String channel);
 
@@ -62,4 +65,8 @@ public interface RepositoryConfiguration extends Entity {
     @Default("false")
     public Boolean getIgnoreNotCrossRepository();
     public void setIgnoreNotCrossRepository(Boolean ignoreNotCrossRepository);
+
+    public String getUserMapJSON();
+    @StringLength(value=StringLength.UNLIMITED)
+    public void setUserMapJSON(String userMapJSON);
 }

@@ -67,6 +67,7 @@ public class RepositoryConfigurationServlet extends HttpServlet {
                     ImmutableMap
                             .<String, Object>builder()
                             .put("repository", repository)
+                            .put("hookURL", StringUtils.defaultString(configuration.getHookURL()))
                             .put("channel", StringUtils.defaultString(configuration.getChannel()))
                             .put("notifyPROpened", configuration.getNotifyPROpened())
                             .put("notifyPRReopened", configuration.getNotifyPRReopened())
@@ -77,6 +78,7 @@ public class RepositoryConfigurationServlet extends HttpServlet {
                             .put("notifyPRCommented", configuration.getNotifyPRCommented())
                             .put("ignoreWIP", configuration.getIgnoreWIP())
                             .put("ignoreNotCrossRepository", configuration.getIgnoreNotCrossRepository())
+                            .put("userMapJSON", StringUtils.defaultString(configuration.getUserMapJSON()))
                             .build()
             );
         } catch (SoyException e) {

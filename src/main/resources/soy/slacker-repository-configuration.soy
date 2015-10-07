@@ -2,6 +2,7 @@
 
 /**
  * @param repository
+ * @param hookURL
  * @param channel
  * @param notifyPROpened
  * @param notifyPRReopened
@@ -12,6 +13,7 @@
  * @param notifyPRCommented
  * @param ignoreWIP
  * @param ignoreNotCrossRepository
+ * @param userMapJSON
  **/
 {template .slackerRepositoryConfigurationPanel}
 <html>
@@ -38,6 +40,13 @@
                     {param action: '' /}
                     {param content}
                         <h3>General Settings</h3>
+                        {call aui.form.textField}
+                            {param id: 'hookURL' /}
+                            {param labelContent: 'Webhook URL' /}
+                            {param required: true /}
+                            {param value: $hookURL /}
+                            {param descriptionText: 'Slack Incomming Webhook URL' /}
+                        {/call}
                         {call aui.form.textField}
                             {param id: 'channel' /}
                             {param labelContent: 'Channel' /}
@@ -118,6 +127,14 @@
                                 'labelText': 'Not cross-repository PullRequest',
                                 'isChecked': $ignoreNotCrossRepository
                             ]] /}
+                        {/call}
+
+                        <h3>User Settings</h3>
+                        {call aui.form.textareaField}
+                            {param id: 'userMapJSON' /}
+                            {param labelContent: stash_i18n('stash.web.stash.user-json.label', 'User Map JSON') /}
+                            {param value: $userMapJSON /}
+                            {param descriptionext: stash_i18n('stash.web.stash.user-json.description', 'User Map JSON(example: "Stash User ID": "Slack User ID")') /}
                         {/call}
 
                         <br />

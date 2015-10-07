@@ -3,6 +3,16 @@
 /**
  * @param project
  * @param hookURL
+ * @param channel
+ * @param notifyPROpened
+ * @param notifyPRReopened
+ * @param notifyPRUpdated
+ * @param notifyPRRescoped
+ * @param notifyPRMerged
+ * @param notifyPRDeclined
+ * @param notifyPRCommented
+ * @param ignoreWIP
+ * @param ignoreNotCrossRepository
  * @param userMapJSON
  **/
 {template .slackerProjectConfigurationPanel}
@@ -34,6 +44,87 @@
                             {param required: true /}
                             {param value: $hookURL /}
                             {param descriptionText: 'Slack Incomming Webhook URL' /}
+                        {/call}
+                        {call aui.form.textField}
+                            {param id: 'channel' /}
+                            {param labelContent: 'Channel' /}
+                            {param value: $channel /}
+                            {param descriptionText: 'Channel(or UserID)' /}
+                        {/call}
+
+                        <h3>PullRequest Notification Settings</h3>
+                        {call aui.form.checkboxField}
+                            {param legendContent: 'Events' /}
+                            {param fields: [[
+                                'id': 'notifyPROpened',
+                                'labelText': 'Opened',
+                                'isChecked': $notifyPROpened
+                            ]] /}
+                        {/call}
+                        {call aui.form.checkboxField}
+                            {param legendContent: '' /}
+                            {param fields: [[
+                                'id': 'notifyPRReopened',
+                                'labelText': 'Reopened',
+                                'isChecked': $notifyPRReopened
+                            ]] /}
+                        {/call}
+                        {call aui.form.checkboxField}
+                            {param legendContent: '' /}
+                            {param fields: [[
+                                'id': 'notifyPRUpdated',
+                                'labelText': 'Updated',
+                                'isChecked': $notifyPRUpdated
+                            ]] /}
+                        {/call}
+                        {call aui.form.checkboxField}
+                            {param legendContent: '' /}
+                            {param fields: [[
+                                'id': 'notifyPRRescoped',
+                                'labelText': 'Rescoped',
+                                'isChecked': $notifyPRRescoped
+                            ]] /}
+                        {/call}
+                        {call aui.form.checkboxField}
+                            {param legendContent: '' /}
+                            {param fields: [[
+                                'id': 'notifyPRMerged',
+                                'labelText': 'Merged',
+                                'isChecked': $notifyPRMerged
+                            ]] /}
+                        {/call}
+                        {call aui.form.checkboxField}
+                            {param legendContent: '' /}
+                            {param fields: [[
+                                'id': 'notifyPRDeclined',
+                                'labelText': 'Declined',
+                                'isChecked': $notifyPRDeclined
+                            ]] /}
+                        {/call}
+                        {call aui.form.checkboxField}
+                            {param legendContent: '' /}
+                            {param fields: [[
+                                'id': 'notifyPRCommented',
+                                'labelText': 'Commented',
+                                'isChecked': $notifyPRCommented
+                            ]] /}
+                            {param descriptionText: 'Require "User Map JSON"' /}
+                        {/call}
+                        {call aui.form.checkboxField}
+                            {param legendContent: 'Silent' /}
+                            {param fields: [[
+                                'id': 'ignoreWIP',
+                                'labelText': 'WIP(Work In Progress)',
+                                'isChecked': $ignoreWIP
+                            ]] /}
+                        {/call}
+                        {call aui.form.checkboxField}
+                            {param legendContent: '' /}
+                            {param fields: [[
+                                'id': 'ignoreNotCrossRepository',
+                                'labelText': 'Not cross-repository PullRequest',
+                                'isChecked': $ignoreNotCrossRepository
+                            ]] /}
                         {/call}
 
                         <h3>User Settings</h3>

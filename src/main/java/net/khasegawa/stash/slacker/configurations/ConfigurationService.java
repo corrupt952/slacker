@@ -21,7 +21,17 @@ public interface ConfigurationService {
 
     public abstract  void setProjectConfiguration(Integer projectId,
                                                   String hookURL,
-                                                  String userMapJson) throws  SQLException;
+                                                  String channel,
+                                                  Boolean notifyPROepened,
+                                                  Boolean notifyPRReopened,
+                                                  Boolean notifyPRUpdated,
+                                                  Boolean notifyPRReescoped,
+                                                  Boolean notifyPRMerged,
+                                                  Boolean notifyPRDeclined,
+                                                  Boolean notifyPRCommented,
+                                                  Boolean ignoreWIP,
+                                                  Boolean ignoreNotCrossRepository,
+                                                  String userMapJSON) throws  SQLException;
 
     public abstract RepositoryConfiguration getRepositoryConfiguration(Integer repositoryId) throws SQLException,
             NullArgumentException;
@@ -32,6 +42,7 @@ public interface ConfigurationService {
             NumberFormatException;
 
     public abstract void setRepositoryConfiguration(Integer repositoryId,
+                                                    String hookURL,
                                                     String channel,
                                                     Boolean notifyPROepened,
                                                     Boolean notifyPRReopened,
@@ -41,6 +52,7 @@ public interface ConfigurationService {
                                                     Boolean notifyPRDeclined,
                                                     Boolean notifyPRCommented,
                                                     Boolean ignoreWIP,
-                                                    Boolean ignoreNotCrossRepository) throws SQLException,
+                                                    Boolean ignoreNotCrossRepository,
+                                                    String userMapJSON) throws  SQLException,
             NullArgumentException;
 }

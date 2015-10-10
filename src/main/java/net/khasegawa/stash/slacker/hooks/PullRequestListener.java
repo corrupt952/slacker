@@ -7,6 +7,7 @@ import com.atlassian.stash.repository.Repository;
 import com.atlassian.stash.server.ApplicationPropertiesService;
 import com.atlassian.stash.user.StashUser;
 import com.google.gson.Gson;
+import com.google.gson.JsonSyntaxException;
 import net.khasegawa.stash.slacker.activeobjects.ProjectConfiguration;
 import net.khasegawa.stash.slacker.activeobjects.RepositoryConfiguration;
 import net.khasegawa.stash.slacker.configurations.ConfigurationService;
@@ -212,10 +213,7 @@ public class PullRequestListener {
             configuration.ignoreWIP = projectConfiguration.getIgnoreWIP();
             configuration.ignoreNotCrossRepository = projectConfiguration.getIgnoreNotCrossRepository();
             configuration.userMap = new HashMap<String, String>();
-            if (StringUtils.isNotBlank(projectConfiguration.getUserMapJSON())) {
-                Map<String, String> userMap = new Gson().fromJson(projectConfiguration.getUserMapJSON(), HashMap.class);
-                // TODO: userMapJSON
-            }
+            configuration.setUserMapJSON(projectConfiguration.getUserMapJSON());
         } else {
             configuration.hookURL = StringUtils.defaultIfBlank(repositoryConfiguration.getHookURL(), projectConfiguration.getHookURL());
             configuration.channel = StringUtils.defaultIfBlank(repositoryConfiguration.getChannel(), projectConfiguration.getChannel());
@@ -229,7 +227,8 @@ public class PullRequestListener {
             configuration.ignoreWIP = BooleanUtils.toBooleanDefaultIfNull(repositoryConfiguration.getIgnoreWIP(), projectConfiguration.getIgnoreWIP());
             configuration.ignoreNotCrossRepository = BooleanUtils.toBooleanDefaultIfNull(repositoryConfiguration.getIgnoreNotCrossRepository(), projectConfiguration.getIgnoreNotCrossRepository());
             configuration.userMap = new HashMap<String, String>();
-            // TODO: userMapJSON
+            configuration.setUserMapJSON(projectConfiguration.getUserMapJSON());
+            configuration.setUserMapJSON(repositoryConfiguration.getUserMapJSON());
         }
 
         return configuration;
@@ -248,5 +247,18 @@ public class PullRequestListener {
         public Boolean ignoreWIP;
         public Boolean ignoreNotCrossRepository;
         public Map<String, String> userMap;
+
+        private void setUserMapJSON(String userMapJSON) {
+            try {
+                if (StringUtils.isNotBlank(userMapJSON)) {
+                    Map<String, String> userMap = new Gson().fromJson(userMapJSON, HashMap.class);
+                    for (Map.Entry<String, String> user : userMap.entrySet()) {
+                        this.userMap.put(user.getKey(), user.getValue());
+                    }
+                }
+            } catch (JsonSyntaxException e) {
+                logger.warn("UserMapJSON is invalid! " + StringUtils.defaultString(userMapJSON));
+            }
+        }
     }
 }

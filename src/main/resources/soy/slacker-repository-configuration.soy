@@ -18,7 +18,7 @@
 {template .slackerRepositoryConfigurationPanel}
 <html>
     <head>
-      <meta name="decorator" content="stash.repository.settings">
+      <meta name="decorator" content="bitbucket.repository.settings">
       <meta name="projectKey" content="{$repository.project.key}">
       <meta name="repositorySlug" content="{$repository.slug}">
       <meta name="activeTab" content="repository-settings-git-ops-panel">
@@ -29,7 +29,7 @@
             {param content}
                 {call aui.group.item}
                     {param content}
-                        <h2>{stash_i18n('stash.web.repository.slacker.heading', 'Slacker Repository Settings')}</h2>
+                        <h2>Slacker Repository Settings</h2>
                     {/param}
                 {/call}
             {/param}
@@ -132,9 +132,9 @@
                         <h3>User Settings</h3>
                         {call aui.form.textareaField}
                             {param id: 'userMapJSON' /}
-                            {param labelContent: stash_i18n('stash.web.stash.user-json.label', 'User Map JSON') /}
+                            {param labelContent: 'User Map JSON' /}
                             {param value: $userMapJSON /}
-                            {param descriptionext: stash_i18n('stash.web.stash.user-json.description', 'User Map JSON(example: "Stash User ID": "Slack User ID")') /}
+                            {param descriptionext: 'User Map JSON(example: "Stash User ID": "Slack User ID")' /}
                         {/call}
 
                         <br />
@@ -143,7 +143,7 @@
                             {param content}
                                 {call aui.form.submit}
                                      {param id: 'submit' /}
-                                     {param text: stash_i18n('stash.web.stash.ci-prefs.submit', 'Save') /}
+                                     {param text: 'Save' /}
                                      {param type: 'submit' /}
                                 {/call}
                             {/param}

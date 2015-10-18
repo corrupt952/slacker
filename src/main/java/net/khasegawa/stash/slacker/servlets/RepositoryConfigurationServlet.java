@@ -1,12 +1,12 @@
 package net.khasegawa.stash.slacker.servlets;
 
+import com.atlassian.bitbucket.AuthorisationException;
 import com.atlassian.soy.renderer.SoyException;
 import com.atlassian.soy.renderer.SoyTemplateRenderer;
-import com.atlassian.stash.repository.Repository;
-import com.atlassian.stash.repository.RepositoryService;
-import com.atlassian.stash.user.AuthenticationException;
-import com.atlassian.stash.user.Permission;
-import com.atlassian.stash.user.PermissionValidationService;
+import com.atlassian.bitbucket.repository.Repository;
+import com.atlassian.bitbucket.repository.RepositoryService;
+import com.atlassian.bitbucket.permission.Permission;
+import com.atlassian.bitbucket.permission.PermissionValidationService;
 import com.google.common.collect.ImmutableMap;
 import net.khasegawa.stash.slacker.activeobjects.RepositoryConfiguration;
 import net.khasegawa.stash.slacker.configurations.ConfigurationService;
@@ -49,7 +49,7 @@ public class RepositoryConfigurationServlet extends HttpServlet {
 
         try {
             permissionValidationService.validateForRepository(repository, Permission.REPO_ADMIN);
-        } catch (AuthenticationException e) {
+        } catch (AuthorisationException e) {
             logger.warn("User {} tried to access the slacker page for {}",
                         req.getRemoteUser(), repository.getSlug());
             resp.sendError(HttpServletResponse.SC_FORBIDDEN);
@@ -103,7 +103,7 @@ public class RepositoryConfigurationServlet extends HttpServlet {
 
         try {
             permissionValidationService.validateForRepository(repository, Permission.REPO_ADMIN);
-        } catch (AuthenticationException e) {
+        } catch (AuthorisationException e) {
             logger.warn("User {} tried to access the slacker page for {}",
                     req.getRemoteUser(), repository.getSlug());
             doGet(req, resp);

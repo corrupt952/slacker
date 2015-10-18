@@ -1,12 +1,12 @@
 package net.khasegawa.stash.slacker.servlets;
 
+import com.atlassian.bitbucket.AuthorisationException;
 import com.atlassian.soy.renderer.SoyException;
 import com.atlassian.soy.renderer.SoyTemplateRenderer;
-import com.atlassian.stash.project.Project;
-import com.atlassian.stash.project.ProjectService;
-import com.atlassian.stash.user.AuthenticationException;
-import com.atlassian.stash.user.Permission;
-import com.atlassian.stash.user.PermissionValidationService;
+import com.atlassian.bitbucket.project.Project;
+import com.atlassian.bitbucket.project.ProjectService;
+import com.atlassian.bitbucket.permission.Permission;
+import com.atlassian.bitbucket.permission.PermissionValidationService;
 import com.google.common.collect.ImmutableMap;
 import net.khasegawa.stash.slacker.activeobjects.ProjectConfiguration;
 import net.khasegawa.stash.slacker.configurations.ConfigurationService;
@@ -49,7 +49,7 @@ public class ProjectConfigurationServlet extends HttpServlet {
 
         try {
             permissionValidationService.validateForProject(project, Permission.PROJECT_ADMIN);
-        } catch (AuthenticationException e) {
+        } catch (AuthorisationException e) {
             logger.warn("User {} tried to access the slacker page for {}", project.getKey());
             doGet(req, resp);
             return;
@@ -103,7 +103,7 @@ public class ProjectConfigurationServlet extends HttpServlet {
 
         try {
             permissionValidationService.validateForProject(project, Permission.PROJECT_ADMIN);
-        } catch (AuthenticationException e) {
+        } catch (AuthorisationException e) {
             logger.warn("User {} tried to access the slacker page for {}", project.getKey());
             doGet(req, resp);
             return;

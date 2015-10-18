@@ -14,10 +14,10 @@
     </ao>
 
     <component-import key="activeObjects" interface="com.atlassian.activeobjects.external.ActiveObjects" />
-    <component-import key="applicationPeropertiesService" interface="com.atlassian.stash.server.ApplicationPropertiesService" />
-    <component-import key="permissionUserService" interface="com.atlassian.stash.user.PermissionValidationService" />
-    <component-import key="projectService" interface="com.atlassian.stash.project.ProjectService" />
-    <component-import key="repositoryService" interface="com.atlassian.stash.repository.RepositoryService" />
+    <component-import key="applicationPeropertiesService" interface="com.atlassian.bitbucket.server.ApplicationPropertiesService" />
+    <component-import key="permissionUserService" interface="com.atlassian.bitbucket.permission.PermissionValidationService" />
+    <component-import key="projectService" interface="com.atlassian.bitbucket.project.ProjectService" />
+    <component-import key="repositoryService" interface="com.atlassian.bitbucket.repository.RepositoryService" />
     <component-import key="soyTemplateRenderer" interface="com.atlassian.soy.renderer.SoyTemplateRenderer" />
 
     <component name="Slacker PullRequest listener" key="slacker-pullrequest-listener" class="net.khasegawa.stash.slacker.hooks.PullRequestListener" />
@@ -30,18 +30,18 @@
         <url-pattern>/slacker/repos/*</url-pattern>
     </servlet>
 
-    <stash-resource key="slacker-configuration" name="Slacker Configuration Panel Resources">
+    <client-resource key="slacker-configuration" name="Slacker Configuration Panel Resources">
         <directory location="/soy/"></directory>
         <context>plugin.page.slacker</context>
-        <dependency>com.atlassian.stash.stash-web-plugin:global</dependency>
-    </stash-resource>
+        <dependency>com.atlassian.bitbucket.server.bitbucket-web:global</dependency>
+    </client-resource>
 
-    <web-item name="Slacker Settings" key="slacker-project-configuration-panel" section="stash.project.settings.panel" weight="1000">
+    <web-item name="Slacker Settings" key="slacker-project-configuration-panel" section="bitbucket.project.settings.panel" weight="1000">
         <conditions type="OR">
-            <condition class="com.atlassian.stash.web.conditions.HasProjectPermissionCondition">
+            <condition class="com.atlassian.bitbucket.web.conditions.HasProjectPermissionCondition">
                 <param name="permission">PROJECT_ADMIN</param>
             </condition>
-            <condition class="com.atlassian.stash.web.conditions.HasGlobalPermissionCondition">
+            <condition class="com.atlassian.bitbucket.web.conditions.HasGlobalPermissionCondition">
                 <param name="permission">SYS_ADMIN</param>
             </condition>
         </conditions>
@@ -49,12 +49,12 @@
         <link linkId="slack-notify-panel-link">/plugins/servlet/slacker/projects/${project.key}</link>
     </web-item>
 
-    <web-item name="Slacker Settings" key="slacker-repository-configuration-panel" section="stash.repository.settings.panel" weight="1000">
+    <web-item name="Slacker Settings" key="slacker-repository-configuration-panel" section="bitbucket.repository.settings.panel" weight="1000">
         <conditions type="OR">
-            <condition class="com.atlassian.stash.web.conditions.HasRepositoryPermissionCondition">
+            <condition class="com.atlassian.bitbucket.web.conditions.HasRepositoryPermissionCondition">
                 <param name="permission">REPO_ADMIN</param>
             </condition>
-            <condition class="com.atlassian.stash.web.conditions.HasGlobalPermissionCondition">
+            <condition class="com.atlassian.bitbucket.web.conditions.HasGlobalPermissionCondition">
                 <param name="permission">SYS_ADMIN</param>
             </condition>
         </conditions>

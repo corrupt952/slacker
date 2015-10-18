@@ -1,8 +1,8 @@
 package net.khasegawa.stash.slacker.configurations;
 
 import com.atlassian.activeobjects.external.ActiveObjects;
-import com.atlassian.stash.project.ProjectService;
-import com.atlassian.stash.repository.RepositoryService;
+import com.atlassian.bitbucket.project.ProjectService;
+import com.atlassian.bitbucket.repository.RepositoryService;
 import net.java.ao.DBParam;
 import net.java.ao.Query;
 import net.khasegawa.stash.slacker.activeobjects.ProjectConfiguration;

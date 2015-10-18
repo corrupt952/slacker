@@ -1,11 +1,11 @@
 package net.khasegawa.stash.slacker.hooks;
 
+import com.atlassian.bitbucket.user.ApplicationUser;
 import com.atlassian.event.api.EventListener;
-import com.atlassian.stash.event.pull.*;
-import com.atlassian.stash.pull.PullRequestAction;
-import com.atlassian.stash.repository.Repository;
-import com.atlassian.stash.server.ApplicationPropertiesService;
-import com.atlassian.stash.user.StashUser;
+import com.atlassian.bitbucket.event.pull.*;
+import com.atlassian.bitbucket.pull.PullRequestAction;
+import com.atlassian.bitbucket.repository.Repository;
+import com.atlassian.bitbucket.server.ApplicationPropertiesService;
 import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
 import net.khasegawa.stash.slacker.activeobjects.ProjectConfiguration;
@@ -149,8 +149,8 @@ public class PullRequestListener {
             if (userMap.isEmpty()) return;
 
             PullRequestCommentEvent commentEvent = (PullRequestCommentEvent) event;
-            StashUser author = null;
-            StashUser user = null;
+            ApplicationUser author = null;
+            ApplicationUser user = null;
             if (event instanceof PullRequestCommentAddedEvent) {
                 author = commentEvent.getPullRequest().getAuthor().getUser();
                 user = commentEvent.getUser();

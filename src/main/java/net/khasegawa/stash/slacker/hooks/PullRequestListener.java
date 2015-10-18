@@ -160,7 +160,13 @@ public class PullRequestListener {
             }
 
             if (author == null || !userMap.containsKey(author.getName()) ||
-                    user == null || !userMap.containsKey(user.getName()) || user.getId() == author.getId()) return;
+                    user == null || !userMap.containsKey(user.getName()) || user.getId() == author.getId()) {
+                if (author == null) logger.warn("Can't get author.");
+                if (user == null) logger.warn("Can't get current user.");
+                if (!userMap.containsKey(author.getName())) logger.warn("Can't find " + author.getName() + " in userMapJSON.");
+                if (!userMap.containsKey(user.getName())) logger.warn("Can't find " + user.getName() + " in userMapJSON.");
+                return;
+            }
 
             String commentUrl = String.format("%s?commentId=%d", url, commentEvent.getComment().getId());
 
@@ -191,44 +197,44 @@ public class PullRequestListener {
         NotifyConfiguration configuration = new NotifyConfiguration();
 
         try {
-            projectConfiguration = configurationService.getProjectConfiguration(repository.getProject().getId());
-            repositoryConfiguration = configurationService.getRepositoryConfiguration(repository.getId());
+            if (configurationService.existsRepositoryConfiguration(repository.getId())) {
+                projectConfiguration = configurationService.getProjectConfiguration(repository.getProject().getId());
+                repositoryConfiguration = configurationService.getRepositoryConfiguration(repository.getId());
+
+                configuration.hookURL = StringUtils.defaultIfBlank(repositoryConfiguration.getHookURL(), projectConfiguration.getHookURL());
+                configuration.channel = StringUtils.defaultIfBlank(repositoryConfiguration.getChannel(), projectConfiguration.getChannel());
+                configuration.notifyPROpened = BooleanUtils.toBooleanDefaultIfNull(repositoryConfiguration.getNotifyPROpened(), projectConfiguration.getNotifyPROpened());
+                configuration.notifyPRReopened = BooleanUtils.toBooleanDefaultIfNull(repositoryConfiguration.getNotifyPRReopened(), projectConfiguration.getNotifyPRReopened());
+                configuration.notifyPRRescoped = BooleanUtils.toBooleanDefaultIfNull(repositoryConfiguration.getNotifyPRRescoped(), projectConfiguration.getNotifyPRRescoped());
+                configuration.notifyPRUpdated = BooleanUtils.toBooleanDefaultIfNull(repositoryConfiguration.getNotifyPRUpdated(), projectConfiguration.getNotifyPRUpdated());
+                configuration.notifyPRMerged = BooleanUtils.toBooleanDefaultIfNull(repositoryConfiguration.getNotifyPRMerged(), projectConfiguration.getNotifyPRMerged());
+                configuration.notifyPRDeclined = BooleanUtils.toBooleanDefaultIfNull(repositoryConfiguration.getNotifyPRDeclined(), projectConfiguration.getNotifyPRDeclined());
+                configuration.notifyPRCommented = BooleanUtils.toBooleanDefaultIfNull(repositoryConfiguration.getNotifyPRCommented(), projectConfiguration.getNotifyPRCommented());
+                configuration.ignoreWIP = BooleanUtils.toBooleanDefaultIfNull(repositoryConfiguration.getIgnoreWIP(), projectConfiguration.getIgnoreWIP());
+                configuration.ignoreNotCrossRepository = BooleanUtils.toBooleanDefaultIfNull(repositoryConfiguration.getIgnoreNotCrossRepository(), projectConfiguration.getIgnoreNotCrossRepository());
+                configuration.userMap = new HashMap<String, String>();
+                configuration.setUserMapJSON(projectConfiguration.getUserMapJSON());
+                configuration.setUserMapJSON(repositoryConfiguration.getUserMapJSON());
+            } else if (configurationService.existsProjectConfiguration(repository.getProject().getId())) {
+                projectConfiguration = configurationService.getProjectConfiguration(repository.getProject().getId());
+
+                configuration.hookURL = projectConfiguration.getHookURL();
+                configuration.channel = projectConfiguration.getChannel();
+                configuration.notifyPROpened = projectConfiguration.getNotifyPROpened();
+                configuration.notifyPRReopened = projectConfiguration.getNotifyPRReopened();
+                configuration.notifyPRRescoped = projectConfiguration.getNotifyPRRescoped();
+                configuration.notifyPRUpdated = projectConfiguration.getNotifyPRUpdated();
+                configuration.notifyPRMerged = projectConfiguration.getNotifyPRMerged();
+                configuration.notifyPRDeclined = projectConfiguration.getNotifyPRDeclined();
+                configuration.notifyPRCommented = projectConfiguration.getNotifyPRCommented();
+                configuration.ignoreWIP = projectConfiguration.getIgnoreWIP();
+                configuration.ignoreNotCrossRepository = projectConfiguration.getIgnoreNotCrossRepository();
+                configuration.userMap = new HashMap<String, String>();
+                configuration.setUserMapJSON(projectConfiguration.getUserMapJSON());
+            }
         } catch (SQLException e) {
             logger.error(e.getMessage());
             return null;
-        }
-
-        if (repositoryConfiguration == null) {
-            if (projectConfiguration == null) return null;
-
-            configuration.hookURL = projectConfiguration.getHookURL();
-            configuration.channel = projectConfiguration.getChannel();
-            configuration.notifyPROpened = projectConfiguration.getNotifyPROpened();
-            configuration.notifyPRReopened = projectConfiguration.getNotifyPRReopened();
-            configuration.notifyPRRescoped = projectConfiguration.getNotifyPRRescoped();
-            configuration.notifyPRUpdated = projectConfiguration.getNotifyPRUpdated();
-            configuration.notifyPRMerged = projectConfiguration.getNotifyPRMerged();
-            configuration.notifyPRDeclined = projectConfiguration.getNotifyPRDeclined();
-            configuration.notifyPRCommented = projectConfiguration.getNotifyPRCommented();
-            configuration.ignoreWIP = projectConfiguration.getIgnoreWIP();
-            configuration.ignoreNotCrossRepository = projectConfiguration.getIgnoreNotCrossRepository();
-            configuration.userMap = new HashMap<String, String>();
-            configuration.setUserMapJSON(projectConfiguration.getUserMapJSON());
-        } else {
-            configuration.hookURL = StringUtils.defaultIfBlank(repositoryConfiguration.getHookURL(), projectConfiguration.getHookURL());
-            configuration.channel = StringUtils.defaultIfBlank(repositoryConfiguration.getChannel(), projectConfiguration.getChannel());
-            configuration.notifyPROpened = BooleanUtils.toBooleanDefaultIfNull(repositoryConfiguration.getNotifyPROpened(), projectConfiguration.getNotifyPROpened());
-            configuration.notifyPRReopened = BooleanUtils.toBooleanDefaultIfNull(repositoryConfiguration.getNotifyPRReopened(), projectConfiguration.getNotifyPRReopened());
-            configuration.notifyPRRescoped = BooleanUtils.toBooleanDefaultIfNull(repositoryConfiguration.getNotifyPRRescoped(), projectConfiguration.getNotifyPRRescoped());
-            configuration.notifyPRUpdated = BooleanUtils.toBooleanDefaultIfNull(repositoryConfiguration.getNotifyPRUpdated(), projectConfiguration.getNotifyPRUpdated());
-            configuration.notifyPRMerged = BooleanUtils.toBooleanDefaultIfNull(repositoryConfiguration.getNotifyPRMerged(), projectConfiguration.getNotifyPRMerged());
-            configuration.notifyPRDeclined = BooleanUtils.toBooleanDefaultIfNull(repositoryConfiguration.getNotifyPRDeclined(), projectConfiguration.getNotifyPRDeclined());
-            configuration.notifyPRCommented = BooleanUtils.toBooleanDefaultIfNull(repositoryConfiguration.getNotifyPRCommented(), projectConfiguration.getNotifyPRCommented());
-            configuration.ignoreWIP = BooleanUtils.toBooleanDefaultIfNull(repositoryConfiguration.getIgnoreWIP(), projectConfiguration.getIgnoreWIP());
-            configuration.ignoreNotCrossRepository = BooleanUtils.toBooleanDefaultIfNull(repositoryConfiguration.getIgnoreNotCrossRepository(), projectConfiguration.getIgnoreNotCrossRepository());
-            configuration.userMap = new HashMap<String, String>();
-            configuration.setUserMapJSON(projectConfiguration.getUserMapJSON());
-            configuration.setUserMapJSON(repositoryConfiguration.getUserMapJSON());
         }
 
         return configuration;

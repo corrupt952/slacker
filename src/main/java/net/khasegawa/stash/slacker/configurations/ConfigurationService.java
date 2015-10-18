@@ -19,6 +19,8 @@ public interface ConfigurationService {
     public abstract void setProjectConfigurationByHttpServletRequest(Integer projectId,
                                                                      HttpServletRequest req) throws SQLException;
 
+    public abstract boolean existsProjectConfiguration(Integer projectId) throws SQLException;
+
     public abstract  void setProjectConfiguration(Integer projectId,
                                                   String hookURL,
                                                   String channel,
@@ -35,6 +37,8 @@ public interface ConfigurationService {
 
     public abstract RepositoryConfiguration getRepositoryConfiguration(Integer repositoryId) throws SQLException,
             NullArgumentException;
+
+    public abstract boolean existsRepositoryConfiguration(Integer repositoryId) throws SQLException;
 
     public abstract void setRepositoryConfigurationByHttpServletRequest(Integer repositoryId,
                                                                         HttpServletRequest req) throws SQLException,

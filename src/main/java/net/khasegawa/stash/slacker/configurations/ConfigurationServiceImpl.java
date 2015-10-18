@@ -56,6 +56,17 @@ public class ConfigurationServiceImpl implements ConfigurationService {
     }
 
     @Override
+    public boolean existsProjectConfiguration(Integer projectId) throws SQLException {
+        if (projectId == null ) throw new NullArgumentException("Project ID is not null!");
+
+        ProjectConfiguration[] configurations = activeObjects.find(
+                ProjectConfiguration.class,
+                Query.select().where("PROjECT_ID = ?", projectId));
+
+        return configurations.length > 0;
+    }
+
+    @Override
     public void setProjectConfigurationByHttpServletRequest(Integer projectId,
                                                             HttpServletRequest req) throws SQLException,
             NullArgumentException,
@@ -163,6 +174,17 @@ public class ConfigurationServiceImpl implements ConfigurationService {
         }
 
         return configurations[0];
+    }
+
+    @Override
+    public boolean existsRepositoryConfiguration(Integer repositoryId) throws SQLException {
+        if (repositoryId == null ) throw new NullArgumentException("Repository ID is not null!");
+
+        RepositoryConfiguration[] configurations = activeObjects.find(
+                RepositoryConfiguration.class,
+                Query.select().where("REPOSITORY_ID = ?", repositoryId));
+
+        return configurations.length > 0;
     }
 
     @Override

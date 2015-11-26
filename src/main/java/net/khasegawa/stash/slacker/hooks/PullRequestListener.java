@@ -225,10 +225,15 @@ public class PullRequestListener {
 
             String commentUrl = String.format("%s?commentId=%d", url, commentEvent.getComment().getId());
 
+            String text = String.format("%s commented to PullRequest <%s|#%d> on %s: <%s|Show>", username, url, id, repoName, commentUrl);
+            Attachment attachment = new Attachment();
+            attachment.pretext = text;
+            attachment.fallback = text;
+            attachment.color = "#447dff";
+            attachment.text = commentEvent.getComment().getText();
+            payload.attachments.add(attachment);
             payload.channel = String.format("@%s", userMap.get(author.getName()));
             payload.username = userMap.get(user.getName());
-            payload.text = String.format("%s commented to PullRequest <%s|#%d> on %s: <%s|Show>",
-                                         username, url, id, repoName, commentUrl);
         } else return;
 
         try {

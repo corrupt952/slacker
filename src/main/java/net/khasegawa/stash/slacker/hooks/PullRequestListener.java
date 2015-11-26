@@ -21,7 +21,9 @@ import org.apache.log4j.Logger;
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
 
@@ -137,7 +139,60 @@ public class PullRequestListener {
         } else if (action == PullRequestAction.UPDATED) {
             if (!configuration.notifyPRUpdated) return;
 
-            payload.text = String.format("%s updated PullRequest <%s|#%d> on %s", username, url, id, repoName);
+            PullRequestUpdatedEvent pullRequestUpdatedEvent = (PullRequestUpdatedEvent) event;
+
+            Attachment attachment = new Attachment();
+
+            attachment.pretext = String.format("%s updated PullRequest <%s|#%d> on %s", username, url, id, repoName);
+            attachment.fallback = String.format("%s updated PullRequest <%s|#%d> on %s", username, url, id, repoName);
+
+            List<Field> fields = new ArrayList<Field>();
+
+            Field previousTitle = new Field();
+            previousTitle.title = "Previous Title";
+            previousTitle.value = pullRequestUpdatedEvent.getPreviousTitle();
+            previousTitle.isShort = true;
+            fields.add(previousTitle);
+
+            Field newTitle = new Field();
+            newTitle.title = "New Title";
+            newTitle.value = pullRequestUpdatedEvent.getPullRequest().getTitle();
+            newTitle.isShort = true;
+            fields.add(newTitle);
+
+            Field previousDescription = new Field();
+            previousDescription.title = "Previous Description";
+            previousDescription.value = pullRequestUpdatedEvent.getPreviousDescription();
+            previousDescription.isShort = true;
+            fields.add(previousDescription);
+
+            Field newDescription = new Field();
+            newDescription.title = "New Description";
+            newDescription.value = pullRequestUpdatedEvent.getPullRequest().getDescription();
+            newDescription.isShort = true;
+            fields.add(newDescription);
+
+            if (pullRequestUpdatedEvent.getPreviousToBranch() != null) {
+                Field previousToBranch = new Field();
+                previousToBranch.title = "Previous To Branch";
+                previousToBranch.value = pullRequestUpdatedEvent.getPreviousToBranch().toString();
+                previousToBranch.isShort = true;
+                fields.add(previousToBranch);
+
+                Field newToBranch = new Field();
+                newToBranch.title = "New To Branch";
+                newToBranch.value = pullRequestUpdatedEvent.getPullRequest().getToRef().toString();
+                newToBranch.isShort = true;
+                fields.add(newToBranch);
+            }
+
+            attachment.fields = fields;
+
+            attachment.title = event.getPullRequest().getTitle();
+            attachment.title_link = url;
+            attachment.color = "#36a64f";
+
+            payload.attachments.add(attachment);
         } else if (action == PullRequestAction.RESCOPED) {
             if (!configuration.notifyPRRescoped) return;
 

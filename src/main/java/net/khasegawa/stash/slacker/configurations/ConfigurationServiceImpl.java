@@ -61,7 +61,7 @@ public class ConfigurationServiceImpl implements ConfigurationService {
 
         ProjectConfiguration[] configurations = activeObjects.find(
                 ProjectConfiguration.class,
-                Query.select().where("PROjECT_ID = ?", projectId));
+                Query.select().where("PROJECT_ID = ?", projectId));
 
         return configurations.length > 0;
     }
